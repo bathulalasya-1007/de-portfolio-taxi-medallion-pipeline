@@ -110,6 +110,10 @@ Sample output captured real governance activity as it happened — `updateTables
 
 **Pipeline run cost:** all three Lakeflow Job tasks ran on Serverless compute, total job duration 1m 38s (bronze_task 1m 6s, silver_task 17s, gold_layer 13s).
 
+![Lakeflow Job DAG on portfolio_catalog](./screenshots/job_run_success.png)
+
+*`bronze_task → silver_task → gold_layer`, all succeeded, running end-to-end against the governed `portfolio_catalog`.*
+
 **Optimization tested:** `OPTIMIZE portfolio_catalog.silver.taxi_trips ZORDER BY (VendorID)`.
 
 **Result:** a `VendorID`-filtered aggregation query ran in 2s both before and after the optimization — no measurable improvement at this dataset size (~2.7M rows). This is an expected, honestly-reported result rather than a fabricated win: Z-ordering's benefit comes from file-level data skipping, and it scales with data volume and file count. On a Delta table this size running on serverless compute, the query planner already has little to gain. At a larger scale (10M+ rows, multiple concurrent filters across partitions), the same optimization would be expected to show a measurable reduction in runtime — this is documented here as a tested tradeoff, not a claimed one.
@@ -139,6 +143,3 @@ Sample output captured real governance activity as it happened — `updateTables
 │   └── lineage_graph.png
 └── README.md
 ```
-
-## Link to Loom Walkthrough
-
